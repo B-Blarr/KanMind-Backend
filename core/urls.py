@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/task/', include('kanban_app.api.urls')),
     path('api/auth/', include ('auth_app.api.urls')),
+    path('api-auth', include('rest_framework.urls')),
 ]
