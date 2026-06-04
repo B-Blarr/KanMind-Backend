@@ -160,6 +160,8 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+Checklist.md
+Claude.md
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -259,3 +261,6 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+
+
