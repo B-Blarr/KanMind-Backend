@@ -10,4 +10,11 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
     
-    
+class Board(models.Model):
+    pass
+
+class Task(models.Model):
+    pass
+
+class Comment(models.Model):
+    pass
