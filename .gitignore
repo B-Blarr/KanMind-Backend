@@ -262,5 +262,8 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+# VS Code editor settings
+.vscode/
+
 
 

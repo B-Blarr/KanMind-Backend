@@ -12,6 +12,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     repeated_password = serializers.CharField(write_only=True)
     fullname = serializers.CharField(max_length=60)
+    email = serializers.EmailField(required=True)
 
     class Meta:
         model = User
