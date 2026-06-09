@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from auth_app.models import UserProfile
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,4 +45,17 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Email already exists')
         return value
     
- 
+class LoginSerializer(serializers.Serializer):
+        
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+        
+
+    def validate(self, data):
+        user = authenticate(
+            username=data['email'],     
+            password=data['password'],)
+        if not user:
+            raise serializers.ValidationError('Invalid credentials')
+        data['user'] = user             
+        return data
