@@ -41,11 +41,13 @@ class BoardDetailReadSerializer(serializers.ModelSerializer):
 
 class BoardDetailWriteSerializer(serializers.ModelSerializer):
     members = serializers.PrimaryKeyRelatedField(many=True, 
-                                                 queryset=User.objects.all())
+                                                 queryset=User.objects.all(), write_only=True)
+    owner_data = UserSerializer(source='owner', read_only=True)
+    members_data = UserSerializer(source='members', many=True, read_only=True)
     
     class Meta:
         model = Board
-        fields = ['id', 'title', 'members']
+        fields = ['id', 'title', 'members', 'owner_data', 'members_data', ]
 
 
 

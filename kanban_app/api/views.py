@@ -18,6 +18,7 @@ class BoardView(generics.ListCreateAPIView):
         user = self.request.user
         return Board.objects.filter(Q(owner=user) | Q(members=user)).distinct()
         
+
 class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Board.objects.all()
     permission_classes = [IsOwnerForDelete, IsAuthenticated]
@@ -26,7 +27,6 @@ class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ('PUT', 'PATCH'):
             return BoardDetailWriteSerializer
         return BoardDetailReadSerializer
-
 
     def get_queryset(self):
         user = self.request.user
