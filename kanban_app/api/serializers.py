@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from kanban_app.models import Board
+from kanban_app.models import Board, Task
 from django.contrib.auth.models import User
 
 
@@ -24,7 +24,7 @@ class BoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'members' 'member_count', 'owner_id']
+        fields = ['id', 'title', 'members', 'member_count', 'owner_id']
 
     def get_member_count(self, obj):
         return obj.members.count()
@@ -51,5 +51,21 @@ class BoardDetailWriteSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'members', 'owner_data', 'members_data', ]
 
 
+class TaskSerializer(serializers.ModelSerializer):
+    board = serializers.PrimaryKeyRelatedField(queryset=Board.objects.all())
+    title = serializers.CharField(max_length=30)
+    description = serializers.CharField(max_length=200)
+    assignee = UserSerializer(read_only=True)
+    assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
+                 source='assignee', write_only=True, required=False)
+    reviewer = UserSerializer( read_only=True)
+    reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
+                source='reviewer', write_only=True, required=False)
+    due_date = serializers.DateField()
+    # comments_count fehlt noch
 
-
+    class Meta:
+        model = Task
+        fields = ['id', 'board', 'title', 'description', 'status', 'priority',
+                  'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
+                  'due_date', ]
