@@ -18,17 +18,26 @@ class BoardSerializer(serializers.ModelSerializer):
                                                   source='owner')
     member_count = serializers.SerializerMethodField()
     members = serializers.PrimaryKeyRelatedField(many=True, write_only=True, queryset=User.objects.all())
-    # ticket_count = 
-    # tasks_to_do_count = 
-    # tasks_high_prio_count = 
+    ticket_count = serializers.SerializerMethodField()
+    tasks_to_do_count = serializers.SerializerMethodField()
+    tasks_high_prio_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'members', 'member_count', 'owner_id']
+        fields = ['id', 'title', 'members', 'member_count', 'ticket_count', 'tasks_to_do_count','tasks_high_prio_count', 'owner_id']
 
     def get_member_count(self, obj):
         return obj.members.count()
     
+    def get_ticket_count(self, obj):
+        return obj.tasks.count()
+    
+    def get_tasks_to_do_count(self, obj):
+        return obj.tasks.filter(status='to-do').count()
+
+    def get_tasks_high_prio_count(self, obj):
+        return obj.tasks.filter(priority='high').count()
+
 
 class BoardDetailReadSerializer(serializers.ModelSerializer):
     owner_id = serializers.PrimaryKeyRelatedField(read_only=True, 
@@ -62,11 +71,14 @@ class TaskSerializer(serializers.ModelSerializer):
     reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
                 source='reviewer', write_only=True, required=False)
     due_date = serializers.DateField()
-    # comments_count fehlt noch
+    # comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
         fields = ['id', 'board', 'title', 'description', 'status', 'priority',
                   'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
-                  'due_date', ]
+                  'due_date' ]
         
+    # def get_comments_count(self, obj):
+    #     return obj.tasks.comments.count()
+

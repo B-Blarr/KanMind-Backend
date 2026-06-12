@@ -3,7 +3,7 @@ from .serializers import BoardSerializer, BoardDetailReadSerializer,\
 BoardDetailWriteSerializer, TaskSerializer
 from kanban_app.models import Board, Task
 from django.db.models import Q 
-from .permissions import IsOwnerOrMember
+from .permissions import IsOwnerOrMember, IsBoardMember
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -28,10 +28,29 @@ class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
             return BoardDetailWriteSerializer
         return BoardDetailReadSerializer
     
+
 class TaskView(generics.CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsBoardMember, IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
+
+class TaskAssignedToView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(assignee=self.request.user)
+    
+
+class TaskReviewView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(reviewer=self.request.user)    
