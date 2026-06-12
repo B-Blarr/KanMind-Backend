@@ -69,3 +69,4 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ['id', 'board', 'title', 'description', 'status', 'priority',
                   'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
                   'due_date', ]
+        
