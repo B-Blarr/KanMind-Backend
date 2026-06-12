@@ -16,3 +16,9 @@ class IsBoardMember(BasePermission):
             return False
         return board.owner == request.user or request.user in board.members.all()
         
+        
+class IsCreatorOrOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method == "DELETE":
+            return obj.board.owner == request.user or obj.creator == request.user
+        return obj.board.owner == request.user or request.user in obj.board.members.all()    
