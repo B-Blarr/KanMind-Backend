@@ -54,3 +54,7 @@ class TaskReviewView(generics.ListAPIView):
 
     def get_queryset(self):
         return Task.objects.filter(reviewer=self.request.user)    
+    
+
+class TaskDetailView(generics.UpdateDestroyAPIView):
+    queryset = Task.objects.all()
