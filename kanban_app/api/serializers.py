@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from kanban_app.models import Board, Task
+from kanban_app.models import Board, Task, Comment
 from django.contrib.auth.models import User
 
 
@@ -89,7 +89,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
     assignee = UserSerializer(read_only=True)
     assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
                  source='assignee', write_only=True, required=False)
-    reviewer = UserSerializer( read_only=True)
+    reviewer = UserSerializer(read_only=True)
     reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
                 source='reviewer', write_only=True, required=False)
     due_date = serializers.DateField()
@@ -98,3 +98,13 @@ class TaskDetailSerializer(serializers.ModelSerializer):
         model = Task
         fields = ['id', 'title', 'description', 'status', 'priority',
                   'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 'due_date' ]
+        
+
+class CommentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    author = serializers.CharField(source='author.first_name', read_only=True)
+    content = serializers.CharField(max_length=200)   
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'created_at', 'author', 'content']
