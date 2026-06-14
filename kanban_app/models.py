@@ -37,3 +37,13 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Comment(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, related_name='authored_comments', on_delete=models.CASCADE)
+    content = models.TextField(max_length=200)
+    task = models.ForeignKey(Task, related_name='comments' , on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.content
