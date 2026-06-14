@@ -22,3 +22,12 @@ class IsCreatorOrOwner(BasePermission):
         if request.method == "DELETE":
             return obj.board.owner == request.user or obj.creator == request.user
         return obj.board.owner == request.user or request.user in obj.board.members.all()    
+    
+
+class IsTaskBoardMember(BasePermission):
+    def has_permission(self, request, view):
+        task_id = view.kwargs.get('pk')
+        task = Task.objects.filter(id=task_id).first()
+        if not task:
+            return False
+        return task.board.owner == request.user or request.user in task.board.members.all()

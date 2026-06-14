@@ -1,7 +1,8 @@
 from rest_framework import generics
 from .serializers import BoardSerializer, BoardDetailReadSerializer,\
-BoardDetailWriteSerializer, TaskSerializer, TaskDetailSerializer
-from kanban_app.models import Board, Task
+    BoardDetailWriteSerializer, TaskSerializer, TaskDetailSerializer,\
+    CommentSerializer
+from kanban_app.models import Board, Task, Comment
 from django.db.models import Q 
 from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner
 from rest_framework.permissions import IsAuthenticated
@@ -60,3 +61,9 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskDetailSerializer
     permission_classes = [IsAuthenticated, IsCreatorOrOwner]
+
+
+class CommentView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = []
