@@ -71,7 +71,7 @@ class TaskSerializer(serializers.ModelSerializer):
     reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
                 source='reviewer', write_only=True, required=False)
     due_date = serializers.DateField()
-    # comments_count = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -79,8 +79,8 @@ class TaskSerializer(serializers.ModelSerializer):
                   'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
                   'due_date' ]
         
-    # def get_comments_count(self, obj):
-    #     return obj.tasks.comments.count()
+    def get_comments_count(self, obj):
+        return obj.tasks.comments.count()
 
 
 class TaskDetailSerializer(serializers.ModelSerializer):
