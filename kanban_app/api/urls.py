@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import BoardView, BoardDetailView, TaskView, TaskAssignedToView,\
-TaskReviewView, TaskDetailView
+TaskReviewView, TaskDetailView, CommentView
 
 urlpatterns = [
     path('boards/', BoardView.as_view(), name='board'),
@@ -9,5 +9,5 @@ urlpatterns = [
     path('tasks/assigned-to-me/', TaskAssignedToView.as_view(), name='task-assigned-to-me'),
     path('tasks/reviewing/', TaskReviewView.as_view(), name='task-reviewing'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
-    # path('tasks/<int:pk>/comments/', ),
+    path('tasks/<int:pk>/comments/', CommentView.as_view(), name='comment'),
 ]

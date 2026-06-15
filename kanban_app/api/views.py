@@ -4,7 +4,8 @@ from .serializers import BoardSerializer, BoardDetailReadSerializer,\
     CommentSerializer
 from kanban_app.models import Board, Task, Comment
 from django.db.models import Q 
-from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner
+from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner,\
+    IsTaskBoardMember
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -63,7 +64,14 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsCreatorOrOwner]
 
 
-class CommentView(generics.CreateAPIView):
+class CommentView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsTaskBoardMember]
+
+    def perform_create(self, serializer):
+        task = Task.objects.get(pk=self.kwargs['pk'])
+        serializer.save(author=self.request.user, task=task)
+
+    def get_queryset(self):
+        return Comment.objects.filter(task_id=self.kwargs['pk']).order_by('created_at')

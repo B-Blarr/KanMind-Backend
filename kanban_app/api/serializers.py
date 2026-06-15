@@ -77,10 +77,10 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = ['id', 'board', 'title', 'description', 'status', 'priority',
                   'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
-                  'due_date' ]
+                  'due_date', 'comments_count' ]
         
     def get_comments_count(self, obj):
-        return obj.tasks.comments.count()
+        return obj.comments.count()
 
 
 class TaskDetailSerializer(serializers.ModelSerializer):
