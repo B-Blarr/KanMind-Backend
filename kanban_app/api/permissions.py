@@ -12,7 +12,7 @@ class IsOwnerOrMember(BasePermission):
         if request.method == "DELETE":
             return obj.owner == request.user
         return obj.owner == request.user or request.user in obj.members.all()
-    
+
 
 class IsBoardMember(BasePermission):
     """Allow only the owner/members of the board named in the request body."""
@@ -23,18 +23,21 @@ class IsBoardMember(BasePermission):
         board = Board.objects.filter(id=board_id).first()
         if not board:
             return False
-        return board.owner == request.user or request.user in board.members.all()
-        
-        
+        return (board.owner == request.user or
+                request.user in board.members.all())
+
+
 class IsCreatorOrOwner(BasePermission):
     """Board members may edit; only the creator or board owner may delete."""
 
     def has_object_permission(self, request, view, obj):
         """Delete: creator or board owner. Otherwise: any board member."""
         if request.method == "DELETE":
-            return obj.board.owner == request.user or obj.creator == request.user
-        return obj.board.owner == request.user or request.user in obj.board.members.all()    
-    
+            return (obj.board.owner == request.user or
+                    obj.creator == request.user)
+        return (obj.board.owner == request.user or
+                request.user in obj.board.members.all())
+
 
 class IsTaskBoardMember(BasePermission):
     """Allow only the owner/members of the board owning the URL task."""
@@ -45,8 +48,9 @@ class IsTaskBoardMember(BasePermission):
         task = Task.objects.filter(id=task_id).first()
         if not task:
             return False
-        return task.board.owner == request.user or request.user in task.board.members.all()
-    
+        return (task.board.owner == request.user or
+                request.user in task.board.members.all())
+
 
 class IsAuthorOfComment(BasePermission):
     """Allow only the author of the comment."""

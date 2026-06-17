@@ -19,11 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 class BoardSerializer(serializers.ModelSerializer):
     """Board summary for list/create with task counts and owner id."""
 
-    owner_id = serializers.PrimaryKeyRelatedField(read_only=True, 
-                                                  source='owner')
+    owner_id = serializers.PrimaryKeyRelatedField(
+        read_only=True, source='owner')
     member_count = serializers.SerializerMethodField()
-    members = serializers.PrimaryKeyRelatedField(many=True, write_only=True,
-                                                queryset=User.objects.all())
+    members = serializers.PrimaryKeyRelatedField(
+        many=True, write_only=True, queryset=User.objects.all())
     ticket_count = serializers.SerializerMethodField()
     tasks_to_do_count = serializers.SerializerMethodField()
     tasks_high_prio_count = serializers.SerializerMethodField()
@@ -31,16 +31,16 @@ class BoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
         fields = ['id', 'title', 'members', 'member_count', 'ticket_count',
-                  'tasks_to_do_count','tasks_high_prio_count', 'owner_id']
+                  'tasks_to_do_count', 'tasks_high_prio_count', 'owner_id']
 
     def get_member_count(self, obj):
         """Return how many members the board has."""
         return obj.members.count()
-    
+
     def get_ticket_count(self, obj):
         """Return the total number of tasks on the board."""
         return obj.tasks.count()
-    
+
     def get_tasks_to_do_count(self, obj):
         """Return the number of tasks still in the 'to-do' status."""
         return obj.tasks.filter(status='to-do').count()
@@ -57,44 +57,46 @@ class TaskSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=30)
     description = serializers.CharField(max_length=200)
     assignee = UserSerializer(read_only=True)
-    assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
-                 source='assignee', write_only=True, required=False)
-    reviewer = UserSerializer( read_only=True)
-    reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
-                source='reviewer', write_only=True, required=False)
+    assignee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='assignee',
+        write_only=True, required=False)
+    reviewer = UserSerializer(read_only=True)
+    reviewer_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='reviewer',
+        write_only=True, required=False)
     due_date = serializers.DateField()
     comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
         fields = ['id', 'board', 'title', 'description', 'status', 'priority',
-                  'assignee', 'assignee_id', 'reviewer', 'reviewer_id', 
-                  'due_date', 'comments_count' ]
-        
+                  'assignee', 'assignee_id', 'reviewer', 'reviewer_id',
+                  'due_date', 'comments_count']
+
     def get_comments_count(self, obj):
         """Return the number of comments on the task."""
         return obj.comments.count()
-    
+
     def validate(self, attrs):
         """Ensure the chosen assignee and reviewer are members of the board."""
-        board = attrs.get('board')             
-        assignee = attrs.get('assignee')       
-        reviewer = attrs.get('reviewer')       
-        members = board.members.all()          
-        if assignee and assignee not in members:  
+        board = attrs.get('board')
+        assignee = attrs.get('assignee')
+        reviewer = attrs.get('reviewer')
+        members = board.members.all()
+        if assignee and assignee not in members:
             raise serializers.ValidationError(
-                {'assignee_id': 'Assignee muss Mitglied des Boards sein.'}) 
+                {'assignee_id': 'Assignee muss Mitglied des Boards sein.'})
         if reviewer and reviewer not in members:
             raise serializers.ValidationError(
                 {'reviewer_id': 'Reviewer muss Mitglied des Boards sein.'})
-        return attrs  
-    
+        return attrs
+
 
 class BoardDetailReadSerializer(serializers.ModelSerializer):
     """Board detail for GET: owner id, members and the nested task list."""
 
-    owner_id = serializers.PrimaryKeyRelatedField(read_only=True, 
-                                                  source='owner')
+    owner_id = serializers.PrimaryKeyRelatedField(
+        read_only=True, source='owner')
     members = UserSerializer(many=True, read_only=True)
     tasks = TaskSerializer(many=True, read_only=True)
 
@@ -106,15 +108,14 @@ class BoardDetailReadSerializer(serializers.ModelSerializer):
 class BoardDetailWriteSerializer(serializers.ModelSerializer):
     """Board detail for PATCH: writable members, returns owner/members data."""
 
-    members = serializers.PrimaryKeyRelatedField(many=True, 
-                                                 queryset=User.objects.all(),
-                                                 write_only=True)
+    members = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all(), write_only=True)
     owner_data = UserSerializer(source='owner', read_only=True)
     members_data = UserSerializer(source='members', many=True, read_only=True)
-    
+
     class Meta:
         model = Board
-        fields = ['id', 'title', 'members', 'owner_data', 'members_data', ]
+        fields = ['id', 'title', 'members', 'owner_data', 'members_data']
 
 
 class TaskDetailSerializer(serializers.ModelSerializer):
@@ -123,40 +124,42 @@ class TaskDetailSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=30)
     description = serializers.CharField(max_length=200)
     assignee = UserSerializer(read_only=True)
-    assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
-                 source='assignee', write_only=True, required=False)
+    assignee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='assignee',
+        write_only=True, required=False)
     reviewer = UserSerializer(read_only=True)
-    reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), 
-                source='reviewer', write_only=True, required=False)
+    reviewer_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='reviewer',
+        write_only=True, required=False)
     due_date = serializers.DateField()
 
     class Meta:
         model = Task
         fields = ['id', 'title', 'description', 'status', 'priority',
-                'assignee', 'assignee_id', 'reviewer', 'reviewer_id',
-                'due_date']
-        
+                  'assignee', 'assignee_id', 'reviewer', 'reviewer_id',
+                  'due_date']
+
     def validate(self, attrs):
         """Ensure assignee and reviewer are members of the task's board."""
-        board = self.instance.board          
-        assignee = attrs.get('assignee')       
-        reviewer = attrs.get('reviewer')       
-        members = board.members.all()          
-        if assignee and assignee not in members:  
+        board = self.instance.board
+        assignee = attrs.get('assignee')
+        reviewer = attrs.get('reviewer')
+        members = board.members.all()
+        if assignee and assignee not in members:
             raise serializers.ValidationError(
-                {'assignee_id': 'Assignee muss Mitglied des Boards sein.'}) 
+                {'assignee_id': 'Assignee muss Mitglied des Boards sein.'})
         if reviewer and reviewer not in members:
             raise serializers.ValidationError(
                 {'reviewer_id': 'Reviewer muss Mitglied des Boards sein.'})
-        return attrs      
-        
+        return attrs
+
 
 class CommentSerializer(serializers.ModelSerializer):
     """Comment representation; the author is shown as the user's full name."""
 
     created_at = serializers.DateTimeField(read_only=True)
     author = serializers.CharField(source='author.first_name', read_only=True)
-    content = serializers.CharField(max_length=200)   
+    content = serializers.CharField(max_length=200)
 
     class Meta:
         model = Comment

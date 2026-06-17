@@ -16,7 +16,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['fullname', 'email', 'password', 'repeated_password']
         extra_kwargs = {
-            'password':{
+            'password': {
                 'write_only': True
             }
         }
@@ -27,36 +27,36 @@ class RegistrationSerializer(serializers.ModelSerializer):
         repeated_pw = self.validated_data['repeated_password']
 
         if pw != repeated_pw:
-            raise serializers.ValidationError({'error':'password downt match'})
+            raise serializers.ValidationError(
+                {'error': 'password downt match'})
 
         account = User(
-            email=self.validated_data['email'], 
+            email=self.validated_data['email'],
             username=self.validated_data['email'],
             first_name=self.validated_data['fullname'])
         account.set_password(pw)
         account.save()
         return account
-        
 
     def validate_email(self, value):
         """Reject the email if a user with it already exists."""
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError('Email already exists')
         return value
-    
+
+
 class LoginSerializer(serializers.Serializer):
     """Authenticate a user by email and password."""
-        
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-        
 
     def validate(self, data):
         """Authenticate the credentials and stash the user in the data."""
         user = authenticate(
-            username=data['email'],     
-            password=data['password'],)
+            username=data['email'],
+            password=data['password'])
         if not user:
             raise serializers.ValidationError('Invalid credentials')
-        data['user'] = user             
+        data['user'] = user
         return data

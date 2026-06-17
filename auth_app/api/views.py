@@ -1,8 +1,7 @@
 """Views for the authentication API: registration, login and email check."""
 
 from rest_framework import generics
-from .serializers import RegistrationSerializer, \
-    LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -26,14 +25,16 @@ class RegistrationView(APIView):
             token, created = Token.objects.get_or_create(user=saved_account)
             data = {
                 'token': token.key,
-                'fullname' : saved_account.first_name,
-                'email' : saved_account.email,
+                'fullname': saved_account.first_name,
+                'email': saved_account.email,
                 'user_id': saved_account.id,
             }
             return Response(data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CustomLoginView(ObtainAuthToken):
     """Log a user in and return an auth token."""
 
@@ -48,13 +49,15 @@ class CustomLoginView(ObtainAuthToken):
             token, created = Token.objects.get_or_create(user=user)
             data = {
                 'token': token.key,
-                'fullname' : user.first_name,
-                'email' : user.email,
+                'fullname': user.first_name,
+                'email': user.email,
                 'user_id': user.id,
             }
             return Response(data, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class EmailCheckView(APIView):
     """Check whether a user with a given email address exists."""

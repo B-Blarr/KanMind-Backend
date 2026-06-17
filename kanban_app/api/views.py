@@ -5,7 +5,7 @@ from .serializers import BoardSerializer, BoardDetailReadSerializer,\
     BoardDetailWriteSerializer, TaskSerializer, TaskDetailSerializer,\
     CommentSerializer
 from kanban_app.models import Board, Task, Comment
-from django.db.models import Q 
+from django.db.models import Q
 from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner,\
     IsTaskBoardMember, IsAuthorOfComment
 from rest_framework.permissions import IsAuthenticated
@@ -25,7 +25,7 @@ class BoardView(generics.ListCreateAPIView):
         """Return boards where the user is owner or member (deduplicated)."""
         user = self.request.user
         return Board.objects.filter(Q(owner=user) | Q(members=user)).distinct()
-        
+
 
 class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update or delete a single board (owner or member only)."""
@@ -38,7 +38,7 @@ class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ('PUT', 'PATCH'):
             return BoardDetailWriteSerializer
         return BoardDetailReadSerializer
-    
+
 
 class TaskView(generics.CreateAPIView):
     """Create a task on a board (the requester must be a board member)."""
@@ -61,7 +61,7 @@ class TaskAssignedToView(generics.ListAPIView):
     def get_queryset(self):
         """Return tasks assigned to the current user."""
         return Task.objects.filter(assignee=self.request.user)
-    
+
 
 class TaskReviewView(generics.ListAPIView):
     """List the tasks where the current user is the reviewer."""
@@ -71,8 +71,8 @@ class TaskReviewView(generics.ListAPIView):
 
     def get_queryset(self):
         """Return tasks the current user reviews."""
-        return Task.objects.filter(reviewer=self.request.user)    
-    
+        return Task.objects.filter(reviewer=self.request.user)
+
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update or delete a single task."""
@@ -96,8 +96,9 @@ class CommentView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         """Return the task's comments in chronological order."""
-        return Comment.objects.filter(task_id=self.kwargs['pk']).order_by('created_at')
-    
+        return Comment.objects.filter(
+            task_id=self.kwargs['pk']).order_by('created_at')
+
 
 class CommentDeleteView(generics.DestroyAPIView):
     """Delete a single comment (only its author may do so)."""
