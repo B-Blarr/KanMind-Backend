@@ -5,7 +5,7 @@ from .serializers import BoardSerializer, BoardDetailReadSerializer,\
 from kanban_app.models import Board, Task, Comment
 from django.db.models import Q 
 from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner,\
-    IsTaskBoardMember
+    IsTaskBoardMember, IsAuthorOfComment
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -23,7 +23,7 @@ class BoardView(generics.ListCreateAPIView):
 
 class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Board.objects.all()
-    permission_classes = [IsOwnerOrMember, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrMember]
 
     def get_serializer_class(self):
         if self.request.method in ('PUT', 'PATCH'):
@@ -34,7 +34,7 @@ class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
 class TaskView(generics.CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsBoardMember, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsBoardMember]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
@@ -43,7 +43,6 @@ class TaskView(generics.CreateAPIView):
 class TaskAssignedToView(generics.ListAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Task.objects.filter(assignee=self.request.user)
@@ -52,7 +51,6 @@ class TaskAssignedToView(generics.ListAPIView):
 class TaskReviewView(generics.ListAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Task.objects.filter(reviewer=self.request.user)    
@@ -75,3 +73,11 @@ class CommentView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Comment.objects.filter(task_id=self.kwargs['pk']).order_by('created_at')
+    
+
+class CommentDeleteView(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
+    permission_classes = [IsAuthenticated, IsAuthorOfComment]
+    
+    def get_queryset(self):
+        return Comment.objects.filter(task_id=self.kwargs['task_id'])

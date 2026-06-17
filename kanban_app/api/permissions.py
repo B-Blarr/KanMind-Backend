@@ -31,3 +31,8 @@ class IsTaskBoardMember(BasePermission):
         if not task:
             return False
         return task.board.owner == request.user or request.user in task.board.members.all()
+    
+
+class IsAuthorOfComment(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.author == request.user
