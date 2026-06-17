@@ -75,7 +75,7 @@ class TaskReviewView(generics.ListAPIView):
     
 
 class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a task (members edit; creator/owner delete)."""
+    """Retrieve, update or delete a single task."""
 
     queryset = Task.objects.all()
     serializer_class = TaskDetailSerializer

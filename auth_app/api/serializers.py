@@ -1,17 +1,8 @@
-"""Serializers for authentication: registration, login and user profiles."""
+"""Serializers for authentication: registration and login."""
 
 from rest_framework import serializers
-from auth_app.models import UserProfile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    """Serializer for the user profile model (tutorial leftover)."""
-
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'bio', 'location']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -31,7 +22,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         }
 
     def save(self):
-        """Create the user (fullname->first_name, email->username) and hash pw."""
+        """Create the user from validated data and hash the password."""
         pw = self.validated_data['password']
         repeated_pw = self.validated_data['repeated_password']
 

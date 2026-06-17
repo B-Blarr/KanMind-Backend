@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BoardSerializer(serializers.ModelSerializer):
-    """Board summary for list/create with aggregate task counts and owner id."""
+    """Board summary for list/create with task counts and owner id."""
 
     owner_id = serializers.PrimaryKeyRelatedField(read_only=True, 
                                                   source='owner')
@@ -51,7 +51,7 @@ class BoardSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    """Full task representation for create/list, incl. board and comment count."""
+    """Full task representation for create and list endpoints."""
 
     board = serializers.PrimaryKeyRelatedField(queryset=Board.objects.all())
     title = serializers.CharField(max_length=30)

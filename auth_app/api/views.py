@@ -1,8 +1,7 @@
 """Views for the authentication API: registration, login and email check."""
 
 from rest_framework import generics
-from auth_app.models import UserProfile
-from .serializers import UserProfileSerializer, RegistrationSerializer, \
+from .serializers import RegistrationSerializer, \
     LoginSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -11,19 +10,6 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-
-class UserProfileList(generics.ListCreateAPIView):
-    """List and create user profiles (tutorial leftover, not in the spec)."""
-
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-
-
-class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a user profile (tutorial leftover)."""
-
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
 
 
 class RegistrationView(APIView):
