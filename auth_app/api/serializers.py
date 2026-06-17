@@ -1,15 +1,21 @@
+"""Serializers for authentication: registration, login and user profiles."""
+
 from rest_framework import serializers
 from auth_app.models import UserProfile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for the user profile model (tutorial leftover)."""
+
     class Meta:
         model = UserProfile
         fields = ['user', 'bio', 'location']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """Validate registration input and create a new user account."""
 
     repeated_password = serializers.CharField(write_only=True)
     fullname = serializers.CharField(max_length=60)
@@ -25,6 +31,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         }
 
     def save(self):
+        """Create the user (fullname->first_name, email->username) and hash pw."""
         pw = self.validated_data['password']
         repeated_pw = self.validated_data['repeated_password']
 
@@ -41,17 +48,20 @@ class RegistrationSerializer(serializers.ModelSerializer):
         
 
     def validate_email(self, value):
+        """Reject the email if a user with it already exists."""
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError('Email already exists')
         return value
     
 class LoginSerializer(serializers.Serializer):
+    """Authenticate a user by email and password."""
         
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
         
 
     def validate(self, data):
+        """Authenticate the credentials and stash the user in the data."""
         user = authenticate(
             username=data['email'],     
             password=data['password'],)

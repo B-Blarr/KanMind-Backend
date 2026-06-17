@@ -1,3 +1,5 @@
+"""Views for the authentication API: registration, login and email check."""
+
 from rest_framework import generics
 from auth_app.models import UserProfile
 from .serializers import UserProfileSerializer, RegistrationSerializer, \
@@ -11,17 +13,26 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 class UserProfileList(generics.ListCreateAPIView):
+    """List and create user profiles (tutorial leftover, not in the spec)."""
+
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+
 
 class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a user profile (tutorial leftover)."""
+
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
+
 class RegistrationView(APIView):
+    """Register a new user and return an auth token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """Create the user and respond with token and account data."""
         serializer = RegistrationSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -38,9 +49,12 @@ class RegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class CustomLoginView(ObtainAuthToken):
+    """Log a user in and return an auth token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """Validate credentials and respond with token and account data."""
         serializer = LoginSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -57,9 +71,12 @@ class CustomLoginView(ObtainAuthToken):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EmailCheckView(APIView):
+    """Check whether a user with a given email address exists."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """Return the user's id/email/fullname, or 400/404 on problems."""
         email = request.query_params.get('email')
         if not email:
             return Response({'error': 'email is required'},

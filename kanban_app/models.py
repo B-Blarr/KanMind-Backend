@@ -1,8 +1,12 @@
+"""Database models for the kanban domain: boards, tasks and comments."""
+
 from django.db import models
 from django.contrib.auth.models import User
 
 
 class Board(models.Model):
+    """A board owned by one user and shared with member users."""
+
     title = models.CharField(max_length=30)
     owner = models.ForeignKey(User, related_name='user_owned', on_delete=models.CASCADE)
     members = models.ManyToManyField(User, related_name='member_board')
@@ -12,6 +16,7 @@ class Board(models.Model):
     
 
 class Task(models.Model):
+    """A task on a board with status, priority, assignee and reviewer."""
 
     STATUS_CHOICES = [
         ('to-do' , 'to-do'),
@@ -40,6 +45,8 @@ class Task(models.Model):
     
 
 class Comment(models.Model):
+    """A comment a user writes on a task."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, related_name='authored_comments', on_delete=models.CASCADE)
     content = models.TextField(max_length=200)

@@ -1,3 +1,5 @@
+"""URL routes for the authentication API (registration, login, email check)."""
+
 from django.urls import path, include
 from .views import UserProfileList, UserProfileDetail, RegistrationView,\
     CustomLoginView, EmailCheckView

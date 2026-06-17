@@ -1,3 +1,5 @@
+"""URL routes for the kanban API (boards, tasks, comments)."""
+
 from django.urls import path, include
 from .views import BoardView, BoardDetailView, TaskView, TaskAssignedToView,\
 TaskReviewView, TaskDetailView, CommentView, CommentDeleteView
