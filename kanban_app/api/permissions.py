@@ -1,6 +1,7 @@
 """Custom permission classes for board, task and comment access."""
 
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import NotFound
 from kanban_app.models import Board, Task
 
 
@@ -47,7 +48,7 @@ class IsTaskBoardMember(BasePermission):
         task_id = view.kwargs.get('pk')
         task = Task.objects.filter(id=task_id).first()
         if not task:
-            return False
+            raise NotFound('Task not found')
         return (task.board.owner == request.user or
                 request.user in task.board.members.all())
 

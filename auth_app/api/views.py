@@ -9,6 +9,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 class RegistrationView(APIView):
@@ -67,8 +69,10 @@ class EmailCheckView(APIView):
     def get(self, request):
         """Return the user's id/email/fullname, or 400/404 on problems."""
         email = request.query_params.get('email')
-        if not email:
-            return Response({'error': 'email is required'},
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({'error': 'email is missing or invalid'},
                             status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.filter(email=email).first()
         if not user:
