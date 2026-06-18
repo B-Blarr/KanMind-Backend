@@ -1,16 +1,15 @@
 """Views for the authentication API: registration, login and email check."""
 
-from rest_framework import generics
-from .serializers import RegistrationSerializer, LoginSerializer
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from rest_framework.views import APIView
+from .serializers import RegistrationSerializer, LoginSerializer
 
 
 class RegistrationView(APIView):

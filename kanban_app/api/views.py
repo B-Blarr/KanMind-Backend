@@ -1,14 +1,17 @@
 """Views for the kanban API: boards, tasks and comments."""
 
-from rest_framework import generics
-from .serializers import BoardSerializer, BoardDetailReadSerializer,\
-    BoardDetailWriteSerializer, TaskSerializer, TaskDetailSerializer,\
-    CommentSerializer
-from kanban_app.models import Board, Task, Comment
 from django.db.models import Q
-from .permissions import IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner,\
-    IsTaskBoardMember, IsAuthorOfComment
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from kanban_app.models import Board, Task, Comment
+from .serializers import (
+    BoardSerializer, BoardDetailReadSerializer, BoardDetailWriteSerializer,
+    TaskSerializer, TaskDetailSerializer, CommentSerializer,
+)
+from .permissions import (
+    IsOwnerOrMember, IsBoardMember, IsCreatorOrOwner,
+    IsTaskBoardMember, IsAuthorOfComment,
+)
 
 
 class BoardView(generics.ListCreateAPIView):
