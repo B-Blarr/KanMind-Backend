@@ -84,7 +84,7 @@ kanmind_backend/
    pip install -r requirements.txt
    ```
 
-4. **Set up your environment file** — copy the provided template, then set
+4. **Set up your environment file**, copy the provided template, then set
    your own secret key. The `.env` file itself is git-ignored.
 
    Windows (PowerShell):
