@@ -84,14 +84,23 @@ kanmind_backend/
    pip install -r requirements.txt
    ```
 
-4. **Create a `.env` file** in the project root (it is git-ignored) with a
-   Django secret key:
+4. **Set up your environment file** — copy the provided template, then set
+   your own secret key. The `.env` file itself is git-ignored.
 
-   ```
-   SECRET_KEY=your-secret-key-here
+   Windows (PowerShell):
+
+   ```powershell
+   Copy-Item .env.template .env
    ```
 
-   You can generate one with:
+   macOS / Linux:
+
+   ```bash
+   cp .env.template .env
+   ```
+
+   Then open `.env` and replace the value with your own `SECRET_KEY`. You can
+   generate one with:
 
    ```bash
    python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
