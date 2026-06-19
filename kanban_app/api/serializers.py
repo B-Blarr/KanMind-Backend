@@ -35,19 +35,19 @@ class BoardSerializer(serializers.ModelSerializer):
 
     def get_member_count(self, obj):
         """Return how many members the board has."""
-        return obj.members.count()
+        return len(obj.members.all())
 
     def get_ticket_count(self, obj):
         """Return the total number of tasks on the board."""
-        return obj.tasks.count()
+        return len(obj.tasks.all())
 
     def get_tasks_to_do_count(self, obj):
         """Return the number of tasks still in the 'to-do' status."""
-        return obj.tasks.filter(status='to-do').count()
+        return sum(1 for task in obj.tasks.all() if task.status == 'to-do')
 
     def get_tasks_high_prio_count(self, obj):
         """Return the number of tasks with 'high' priority."""
-        return obj.tasks.filter(priority='high').count()
+        return sum(1 for task in obj.tasks.all() if task.priority == 'high')
 
 
 class TaskSerializer(serializers.ModelSerializer):

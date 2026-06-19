@@ -27,7 +27,9 @@ class BoardView(generics.ListCreateAPIView):
     def get_queryset(self):
         """Return boards where the user is owner or member (deduplicated)."""
         user = self.request.user
-        return Board.objects.filter(Q(owner=user) | Q(members=user)).distinct()
+        return Board.objects.filter(
+            Q(owner=user) | Q(members=user)
+            ).prefetch_related('members', 'tasks').distinct()
 
 
 class BoardDetailView(generics.RetrieveUpdateDestroyAPIView):
