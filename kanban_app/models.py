@@ -20,15 +20,15 @@ class Task(models.Model):
     """A task on a board with status, priority, assignee and reviewer."""
 
     STATUS_CHOICES = [
-        ('to-do', 'to-do'),
-        ('in-progress', 'in-progress'),
-        ('review', 'review'),
-        ('done', 'done'),
+        ('to-do', 'To-do'),
+        ('in-progress', 'In-progress'),
+        ('review', 'Review'),
+        ('done', 'Done'),
     ]
     PRIORITY_CHOICES = [
-        ('low', 'low'),
-        ('medium', 'medium'),
-        ('high', 'high'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
     ]
 
     board = models.ForeignKey(

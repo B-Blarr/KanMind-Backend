@@ -19,11 +19,13 @@ class IsBoardMember(BasePermission):
     """Allow only the owner/members of the board named in the request body."""
 
     def has_permission(self, request, view):
-        """Check membership against the board id sent in the request data."""
+        """Check board membership; raise 404 if the board does not exist."""
         board_id = request.data.get('board')
+        if not board_id:
+            return True
         board = Board.objects.filter(id=board_id).first()
-        if not board:
-            return False
+        if board is None:
+            raise NotFound('Board not found')
         return (board.owner == request.user or
                 request.user in board.members.all())
 
