@@ -24,12 +24,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
 
+
+def env_bool(name, default="False"):
+    """Read a true/false switch from the environment."""
+    return os.getenv(name, default).strip().lower() in ("1", "true", "yes")
+
+
+def env_list(name, default=""):
+    """Read a comma separated list from the environment."""
+    raw = os.getenv(name, default)
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set in the environment variables.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Off unless the .env switches it on, so a forgotten setting fails safe.
+DEBUG = env_bool("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]")
 
 
 # Application definition
