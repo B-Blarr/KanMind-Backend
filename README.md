@@ -106,6 +106,15 @@ kanmind_backend/
    python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
    ```
 
+   | Variable        | Description                                               |
+   | --------------- | --------------------------------------------------------- |
+   | `SECRET_KEY`    | Django secret key, the server does not start without it   |
+   | `DEBUG`         | Django debug mode, off unless set to `True`               |
+   | `ALLOWED_HOSTS` | Comma separated host names, defaults to `localhost,127.0.0.1,[::1]` |
+
+   The template sets `DEBUG = True` for local development. On a server, leave
+   it out or set it to `False`.
+
 5. **Apply the database migrations**
 
    ```bash
@@ -194,6 +203,13 @@ Base path: `/api/`
 
 ## Conventions & Notes
 
+- **Rate limits.** Registration and login share one limit of 10 requests per
+  minute and client, the email check allows 30 per minute. Beyond that the API
+  answers `429 Too Many Requests`. The counters live in Django's default
+  in-memory cache, which is right for `runserver`. Under Gunicorn every worker
+  would count on its own, so a deployment would need a shared cache such as
+  the database cache. Behind a reverse proxy, set `NUM_PROXIES=1` so the real
+  client address is used.
 - **User model:** The project uses Django's built-in `User`. The full name is
   stored in `first_name`, and `username` is set to the user's email.
 - **Task `status`:** one of `to-do`, `in-progress`, `review`, `done`.
