@@ -22,8 +22,8 @@ comments, built with Django and the Django REST Framework.
 | Component  | Version                              |
 | ---------- | ------------------------------------ |
 | Language   | Python 3.12+ (required by Django 6)  |
-| Framework  | Django 6.0.6                         |
-| API        | Django REST Framework 3.17.1         |
+| Framework  | Django 6.0.9                         |
+| API        | Django REST Framework 3.18.3         |
 | Database   | SQLite                               |
 | Auth       | DRF Token Authentication             |
 
