@@ -147,4 +147,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    # Counted per client in Django's default cache.
+    'DEFAULT_THROTTLE_RATES': {
+        'auth': '10/minute',
+        'email_check': '30/minute',
+    },
+    # How many proxies sit in front of Django. Without this DRF would take
+    # the client IP from X-Forwarded-For, a header every client can fake to
+    # dodge the limits. 0 means the direct connection; set 1 behind nginx.
+    'NUM_PROXIES': int(os.getenv("NUM_PROXIES", "0")),
 }

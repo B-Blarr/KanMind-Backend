@@ -8,6 +8,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from .serializers import RegistrationSerializer, LoginSerializer
 
@@ -16,6 +17,8 @@ class RegistrationView(APIView):
     """Register a new user and return an auth token."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
 
     def post(self, request):
         """Create the user and respond with token and account data."""
@@ -40,6 +43,8 @@ class CustomLoginView(ObtainAuthToken):
     """Log a user in and return an auth token."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
 
     def post(self, request):
         """Validate credentials and respond with token and account data."""
@@ -62,6 +67,11 @@ class CustomLoginView(ObtainAuthToken):
 
 class EmailCheckView(APIView):
     """Check whether a user with a given email address exists."""
+
+    # Answers whether an address has an account, so it is limited to keep
+    # anyone from walking through a list of addresses.
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'email_check'
 
     def get(self, request):
         """Return the user's id/email/fullname, or 400/404 on problems."""
